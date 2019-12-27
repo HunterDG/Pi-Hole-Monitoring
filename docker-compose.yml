@@ -13,7 +13,7 @@ services:
     networks:
       - influxdb
     volumes:
-      - /etc/pihole/:/etc/pihole
+      - etc_pihole:/etc/pihole:ro
     restart: unless-stopped
 
   telegraf:
@@ -55,6 +55,8 @@ services:
 volumes:
   grafana-storage:
   influxdb-storage:
+  etc_pihole:
+    external: true
 
 networks:
   influxdb:
