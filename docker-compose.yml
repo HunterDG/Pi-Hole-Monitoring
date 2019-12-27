@@ -25,7 +25,7 @@ services:
       - influxdb
     volumes:
       - ./telegraf:/etc/telegraf
-    restart: always
+    restart: unless-stopped
 
   influxdb:
     image: influxdb:latest
