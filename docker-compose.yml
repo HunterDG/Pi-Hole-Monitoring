@@ -26,6 +26,8 @@ services:
     volumes:
       - ./telegraf:/etc/telegraf
     restart: unless-stopped
+    extra_hosts:
+      - pi.hole:${ipaddr}
 
   influxdb:
     image: influxdb:latest
