@@ -13,7 +13,7 @@ services:
     networks:
       - influxdb
     volumes:
-      - etc_pihole:/etc/pihole:ro
+      - etc-pihole:/etc/pihole:ro
     restart: unless-stopped
 
   telegraf:
@@ -27,7 +27,7 @@ services:
       - ./telegraf:/etc/telegraf
     restart: unless-stopped
     extra_hosts:
-      - pi.hole:${ipaddr}
+      - pi.hole:${ipAddr}
 
   influxdb:
     image: influxdb:latest
@@ -54,11 +54,36 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
     restart: unless-stopped
 
+  pihole:
+      container_name: pihole
+      ports:
+          - '53:53/tcp'
+          - '53:53/udp'
+          - '80:80'
+          - '443:443'
+      environment:
+          - TZ=America/Chicago
+          - WEBPASSWORD=${webPassword}
+          - ServerIP=${ipAddr}
+          - DNS1=${dns1}
+          - DNS2=${dns2}
+          - CONDITIONAL_FORWARDING=True
+          - CONDITIONAL_FORWARDING_IP=${fwdIp}
+          - CONDITIONAL_FORWARDING_DOMAIN=${fwdDomain}
+      volumes:
+          - 'etc-pihole:/etc/pihole'
+          - 'etc-dnsmasq.d/:/etc/dnsmasq.d'
+      dns:
+          - 127.0.0.1
+          - 1.1.1.1
+      restart: unless-stopped
+      image: 'pihole/pihole:latest'
+
 volumes:
   grafana-storage:
   influxdb-storage:
-  etc_pihole:
-    external: true
+  etc-pihole:
+  etc-dnsmasq.d:
 
 networks:
   influxdb:
